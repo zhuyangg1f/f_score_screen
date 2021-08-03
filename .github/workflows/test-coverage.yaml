@@ -1,0 +1,54 @@
+on:
+  pull_request:
+    branches:
+      - main
+
+name: test-coverage
+
+jobs:
+  test-coverage:
+    runs-on: ubuntu-18.04
+    env:
+      # If any R package dependencies come from private lks-chart github repos,
+      # the  GITHUB_PAT env variable needs to be set to a Personal Access Token
+      # to authenticate installing these remotes. You must also have created a
+      # GH secret called "PAT" to store your access token (see clickup docs for
+      # more details)
+      GITHUB_PAT: ${{ secrets.PAT }}
+      RENV_PATHS_ROOT: ~/.local/share/renv
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: 3.6
+
+      - uses: r-lib/actions/setup-pandoc@master
+
+      # Linux dependencies needed for installing remotes
+      - name: Install libcurl
+        run: sudo apt-get install libcurl4-openssl-dev
+
+      # Cache R packages using renv.lock
+      - name: Cache R packages
+        uses: actions/cache@v1
+        id: cache
+        with:
+          path: ${{ env.RENV_PATHS_ROOT }}
+          key: ${{runner.os  }}-renv-${{ hashFiles('**/renv.lock') }}
+          restore-keys: ${{ runner.os }}-renv-
+
+      # Install renv if it isn't already
+      - name: Install renv
+        run: R -e 'if (!("renv" %in% installed.packages())) install.packages("renv")'
+
+      - name: Install dependencies
+        run: |
+          renv::restore()
+          if (!("remotes" %in% installed.packages())) install.packages("remotes")
+          remotes::install_cran("covr")
+        shell: Rscript {0}
+
+      - name: Test coverage
+        run: covr::codecov(path = "./pkg", token = "${{ secrets.CODECOV_TOKEN }}")
+        shell: Rscript {0}
