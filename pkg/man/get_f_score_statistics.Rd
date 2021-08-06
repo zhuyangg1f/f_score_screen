@@ -8,10 +8,6 @@ get_f_score_statistics(symbol)
 }
 \arguments{
 \item{symbol}{character object, ticker name}
-
-\item{api_key}{character object, api key from alphavantage}
-
-\item{data_type}{character object, either json or csv}
 }
 \value{
 a list object contains f-score statistics

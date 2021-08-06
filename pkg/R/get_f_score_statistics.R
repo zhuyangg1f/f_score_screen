@@ -3,8 +3,6 @@
 #' Get F-Score Statistics based on calculation
 #'
 #' @param symbol character object, ticker name
-#' @param api_key character object, api key from alphavantage
-#' @param data_type character object, either json or csv
 #' @return a list object contains f-score statistics
 #' @importFrom lubridate as_date
 #' @export
@@ -67,6 +65,7 @@ get_f_score_statistics <- function(symbol) {
 
   annual_report <- data.frame(
     fiscal_date = as.character(balance_sheet$annualReports$fiscalDateEnding[1:3]),
+    annual_net_income = annual_net_income,
     annual_roa = annual_roa,
     annual_cfo = annual_cfo,
     annual_roa_ratio = annual_roa_ratio,
@@ -113,6 +112,7 @@ get_f_score_statistics <- function(symbol) {
 
   quarter_report <- data.frame(
     fiscal_date = as.character(balance_sheet$quarterlyReports$fiscalDateEnding[1:13]),
+    quarter_net_income = quarter_net_income,
     quarter_roa = quarter_roa,
     quarter_cfo = quarter_cfo,
     quarter_roa_ratio = quarter_roa_ratio,
