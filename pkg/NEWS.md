@@ -1,4 +1,4 @@
 # fscorescreen 0.0.0.9000
 
 * Added a `NEWS.md` file to track changes to the package.
-* Added `create_api_url` that returns api request url sends to alphavantage
+* Added `get_raw_api_content` that returns raw api content from alphavantage

@@ -1,16 +1,20 @@
-#' Create API URL
+#' Get Raw API Content
 #'
-#' Create API URL to send request to alphavantage
+#' Get Raw API Content from alphavantage
 #'
 #' @param symbol character object, ticker name
 #' @param api_fun character object, api function defined by alphavantage
 #' @param api_key character object, api key from alphavantage
 #' @param data_type character object, either json or csv
-#' @return a url contains API request information
+#' @return raw content from alphavantage API
 #' @importFrom stringr str_c
 #' @importFrom glue glue
+#' @importFrom readr read_csv
+#' @importFrom jsonlite fromJSON
+#' @import dplyr
+#' @import httr
 #' @export
-create_api_url <- function(symbol,
+get_raw_api_content <- function(symbol,
                            api_fun,
                            api_key = "4HQVKYYYNZTDVUJ2",
                            data_type = "json",
@@ -33,6 +37,19 @@ create_api_url <- function(symbol,
   url_params <- stringr::str_c(names(dots), dots, sep = "=", collapse = "&")
   url <- glue::glue("https://www.alphavantage.co/query?function={api_fun}&{url_params}")
 
-  return(url)
+  # Get raw API content
+  ua <- httr::user_agent("https://github.com/business-science")
+
+  response <- httr::GET(url, ua)
+
+  # Extract raw content
+  content_type <- httr::http_type(response)
+
+  content <- httr::content(response, as = "text", encoding = "UTF-8")
+
+  content_list <- content %>% jsonlite::fromJSON()
+
+  return(content_list)
+
 
 }
