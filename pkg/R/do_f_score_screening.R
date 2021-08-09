@@ -3,11 +3,13 @@
 #' Perform F-Score Srenning based on statistics
 #'
 #' @param symbol character object, ticker name
+#' @param criteria_num  numeric object, states the number of f-score criteria needs to be met
 #' @return a list object contains screening result based on annual/quarter report
 #' @export
-do_f_score_screening <- function(symbol) {
+do_f_score_screening <- function(symbol,
+                                 criteria_num = 8) {
 
-  statistics <- get_f_score_statistics("RNGR")
+  statistics <- get_f_score_statistics(symbol)
 
   # -------------------------------------------------------------------------------------------------------
   # Annual check
@@ -53,24 +55,25 @@ do_f_score_screening <- function(symbol) {
   # Y1 assets turnover > Y2 assets turnover
   quarter_check9 <- statistics$quarter_report[1, "quarter_asset_turnover"] > statistics$quarter_report[5, "quarter_asset_turnover"]
 
-  if(all(annual_check1, annual_check2, annual_check3,
+  if(sum(annual_check1, annual_check2, annual_check3,
          annual_check4, annual_check5, annual_check6,
-         annual_check7, annual_check8, annual_check9)) {
+         annual_check7, annual_check8, annual_check9, na.rm = T) >= criteria_num) {
     annual_check <- TRUE
   } else {
     annual_check <- FALSE
   }
 
-  if(all(quarter_check1, quarter_check2, quarter_check3,
+  if(sum(quarter_check1, quarter_check2, quarter_check3,
          quarter_check4, quarter_check5, quarter_check6,
-         quarter_check7, quarter_check8, quarter_check9)) {
+         quarter_check7, quarter_check8, quarter_check9, na.rm = T) >= criteria_num) {
     quarter_check <- TRUE
   } else {
     quarter_check <- FALSE
   }
 
-  output <- list(
+  output <- data.frame(
     symbol = symbol,
+    capital = as.numeric(statistics$capital),
     annual_check = annual_check,
     quarter_check = quarter_check
   )

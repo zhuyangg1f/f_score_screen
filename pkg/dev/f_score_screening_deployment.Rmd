@@ -1,0 +1,43 @@
+---
+title: "F-Score Screening Script"
+author: "Yang Zhu"
+date: "05/08/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(dplyr)
+pkgload::load_all()
+```
+
+## Get Tickers
+
+```{r get tickers}
+tickers <- readr::read_csv("nasdaq_screener_2021_08_03.csv") %>% 
+  dplyr::pull(Symbol)
+```
+
+## Perform F-score Screening
+
+```{r do screening}
+f_score_screen <- find_target_stocks(tickers) 
+
+quater_filter <- f_score_screen %>% 
+  filter(quarter_check == T, capital >= 1000000000) %>% 
+  mutate(capital = capital/1000000)
+  mutate(symbol = as.character(symbol)) %>% 
+  rowwise() %>% 
+  mutate(sector = get_raw_api_content(symbol, "OVERVIEW")$Sector, 
+         industry = list(get_raw_api_content(symbol, "OVERVIEW")$Industry))
+```
+
+## Select Ticker Passed Screening
+
+```{r select ticker}
+save_date <- Sys.Date()
+write.csv(f_score_screen, glue::glue("f_score_screening_results_{save_date}.csv"), row.names = F)
+```
