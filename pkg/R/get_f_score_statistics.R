@@ -16,8 +16,8 @@ get_f_score_statistics <- function(symbol) {
   earnings <- get_raw_api_content(symbol, "EARNINGS")
   capital <- overview$MarketCapitalization
 
-  # quit if less than 3 years
-  if(dim(balance_sheet$annualReports)[1] < 3) {
+  # quit if less than 3 years or ticker not found
+  if(length(overview) == 0 | dim(balance_sheet$annualReports)[1] < 3) {
 
     output <- list(
       symbol = symbol,
@@ -27,6 +27,7 @@ get_f_score_statistics <- function(symbol) {
     )
 
     return(output)
+
   }
 
   # ------------------------------------------------------------------------------------

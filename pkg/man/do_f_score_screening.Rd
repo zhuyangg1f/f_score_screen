@@ -4,10 +4,12 @@
 \alias{do_f_score_screening}
 \title{Perform F-Score Srenning}
 \usage{
-do_f_score_screening(symbol)
+do_f_score_screening(symbol, criteria_num = 8)
 }
 \arguments{
 \item{symbol}{character object, ticker name}
+
+\item{criteria_num}{numeric object, states the number of f-score criteria needs to be met}
 }
 \value{
 a list object contains screening result based on annual/quarter report

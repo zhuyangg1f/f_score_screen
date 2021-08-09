@@ -7,7 +7,7 @@
 get_raw_api_content(
   symbol,
   api_fun,
-  api_key = "4HQVKYYYNZTDVUJ2",
+  api_key = "8ZQHIMUKAYE89GEH",
   data_type = "json",
   ...
 )
